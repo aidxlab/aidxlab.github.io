@@ -194,6 +194,13 @@
   }
   function closeSheet() { sheet.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
   $$('.theme').forEach(b => b.addEventListener('click', () => openSheet(+b.dataset.t, b)));
+  // the scrolling strip opens the same theme panel
+  $$('.strip-i').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    const btn = $('.theme[data-t="' + a.dataset.t + '"]');
+    $('#research').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    setTimeout(() => openSheet(+a.dataset.t, btn), reduce ? 0 : 600);
+  }));
   sheetX.addEventListener('click', closeSheet);
   sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
   addEventListener('keydown', e => {

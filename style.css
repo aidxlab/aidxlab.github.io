@@ -189,7 +189,11 @@ em{font-style:italic;color:var(--gold)}
 .eng-log{margin:10px 2px 0;min-height:1.4em;color:var(--dim);font-size:10px;letter-spacing:.06em}
 .eng-log .ok{color:var(--gold)}.eng-log .ov{color:var(--sky)}
 
-/* ---------- strip ---------- */
+/* ---------- strip: clickable research themes ---------- */
+.strip-i{color:var(--dim);text-decoration:none;transition:color .2s}
+.strip-i:hover,.strip-i:focus-visible{color:var(--gold)}
+.strip:hover .strip-t,.strip:focus-within .strip-t{animation-play-state:paused}
+
 .strip{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--bg2);overflow:hidden;padding:15px 0}
 .strip-t{display:flex;gap:26px;white-space:nowrap;width:max-content;animation:slide 48s linear infinite;
   font-family:'Fraunces',serif;font-size:clamp(1.15rem,2vw,1.6rem);color:var(--dim)}

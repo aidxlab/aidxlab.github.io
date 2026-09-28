@@ -428,55 +428,62 @@
 })();
 
 /* ================================================================
-   PHOTO SLIDER — arrows, dots, autoplay, swipe, keyboard
+   HIGHLIGHT TIMELINE
+   One component: the photo, the story and the step rail always show the
+   same item. It advances on a timer, the bar under the active step shows
+   the time left, and any interaction restarts the timer.
    ================================================================ */
-(function slider() {
-  var track = document.getElementById('track');
-  if (!track) return;
-  var slides = track.children;
-  var n = slides.length;
-  var dotsBox = document.getElementById('sDots');
-  var i = 0, timer = null;
+(function timeline() {
+  var box = document.getElementById('tl');
+  if (!box) return;
+  var pics  = box.querySelectorAll('.st-item');
+  var copy  = box.querySelectorAll('.tl-copy');
+  var steps = box.querySelectorAll('.step');
+  var n = steps.length, i = 0, timer = null;
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  for (var d = 0; d < n; d++) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.setAttribute('role', 'tab');
-    b.setAttribute('aria-label', 'Photo ' + (d + 1));
-    b.dataset.i = d;
-    dotsBox.appendChild(b);
-  }
-  var dots = dotsBox.children;
+  var HOLD = 7000;                      // must match the 7s bar animation in the CSS
 
   function show(k) {
     i = (k + n) % n;
-    track.style.transform = 'translateX(' + (-i * 100) + '%)';
     for (var d = 0; d < n; d++) {
-      dots[d].setAttribute('aria-selected', d === i ? 'true' : 'false');
-      slides[d].setAttribute('aria-hidden', d === i ? 'false' : 'true');
+      var on = d === i;
+      pics[d].classList.toggle('on', on);
+      copy[d].classList.toggle('on', on);
+      steps[d].classList.toggle('on', on);
+      steps[d].setAttribute('aria-pressed', on ? 'true' : 'false');
+      pics[d].setAttribute('aria-hidden', on ? 'false' : 'true');
     }
   }
   function next() { show(i + 1); }
   function prev() { show(i - 1); }
-  function play() { if (!still) { stop(); timer = setInterval(next, 5000); } }
-  function stop() { if (timer) { clearInterval(timer); timer = null; } }
 
-  document.getElementById('sNext').addEventListener('click', function () { next(); play(); });
-  document.getElementById('sPrev').addEventListener('click', function () { prev(); play(); });
-  dotsBox.addEventListener('click', function (e) {
-    var b = e.target.closest('button');
-    if (b) { show(+b.dataset.i); play(); }
+  function start() {
+    if (still) return;
+    stop();
+    box.classList.remove('paused');
+    timer = setInterval(next, HOLD);
+  }
+  function stop() {
+    if (timer) { clearInterval(timer); timer = null; }
+    box.classList.add('paused');
+  }
+  function go(k) { show(k); start(); }   // restart the clock after any click
+
+  document.getElementById('tlNext').addEventListener('click', function () { go(i + 1); });
+  document.getElementById('tlPrev').addEventListener('click', function () { go(i - 1); });
+
+  document.getElementById('tlSteps').addEventListener('click', function (e) {
+    var b = e.target.closest('.step');
+    if (b) go(+b.dataset.i);
   });
 
-  var box = document.getElementById('slider');
   box.addEventListener('mouseenter', stop);
-  box.addEventListener('mouseleave', play);
+  box.addEventListener('mouseleave', start);
   box.addEventListener('focusin', stop);
-  box.addEventListener('focusout', play);
+  box.addEventListener('focusout', start);
   box.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowRight') { next(); play(); }
-    if (e.key === 'ArrowLeft') { prev(); play(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(i - 1); }
   });
 
   var x0 = null;
@@ -484,13 +491,14 @@
   box.addEventListener('touchend', function (e) {
     if (x0 === null) return;
     var dx = e.changedTouches[0].clientX - x0;
-    if (dx < -40) next(); else if (dx > 40) prev();
-    x0 = null; play();
+    if (dx < -40) go(i + 1); else if (dx > 40) go(i - 1);
+    x0 = null;
   });
 
+  // only run while it is on screen
   new IntersectionObserver(function (es) {
-    es.forEach(function (en) { en.isIntersecting ? play() : stop(); });
-  }, { threshold: 0.25 }).observe(box);
+    es.forEach(function (en) { en.isIntersecting ? start() : stop(); });
+  }, { threshold: 0.3 }).observe(box);
 
   show(0);
 })();

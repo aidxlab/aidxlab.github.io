@@ -344,12 +344,12 @@
      and the publications that relate to each theme
      ================================================================ */
   const pubItems = $$('.pub');
-    const THEMES = [
+  const THEMES = [
     { t: 'Decision Intelligence & Human-AI Collaboration', d: 'Advancing AI systems that support better human decision-making.', rel: [10] },
-    { t: 'Trustworthy AI & Governance', d: 'Building responsible, explainable, fair, and accountable AI.', rel: [4, 9] },
-    { t: 'Agentic AI & Adaptive Systems', d: 'Developing intelligent agents that can reason, adapt, and collaborate safely.', rel: [2, 3, 8, 9] },
-    { t: 'AI for Learning & Capability Development', d: 'Enhancing education, assessment, and personalised learning through AI.', rel: [1, 3, 5, 8, 9] },
-    { t: 'AI for Organisations & Society', d: 'Applying AI to create measurable impact across business, education, government, and communities.', rel: [0, 6, 7] }
+    { t: 'Trustworthy AI & Governance', d: 'Building responsible, explainable, fair, and accountable AI.', rel: [9, 8] },
+    { t: 'Agentic AI & Adaptive Systems', d: 'Developing intelligent agents that can reason, adapt, and collaborate safely.', rel: [3, 4, 7, 8] },
+    { t: 'AI for Learning & Capability Development', d: 'Enhancing education, assessment, and personalised learning through AI.', rel: [2, 4, 6, 7, 8] },
+    { t: 'AI for Organisations & Society', d: 'Applying AI to create measurable impact across business, education, government, and communities.', rel: [0, 1, 5] }
   ];
   const sheet = $('#sheet'), sheetBody = $('#sheetBody'), sheetX = $('#sheetX');
   let lastFocus = null;
@@ -427,21 +427,130 @@
   })();
 })();
 
-/* YouTube click-to-play: loads the player on click when served over http(s);
-   when the page is opened as a local file (YouTube blocks that), the link opens YouTube instead. */
-(function () {
-  if (!/^https?:$/.test(location.protocol)) return;
-  document.querySelectorAll('.yt[data-yt]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      var f = document.createElement('iframe');
-      f.src = 'https://www.youtube.com/embed/' + a.dataset.yt + '?autoplay=1&rel=0&playsinline=1';
-      f.title = a.dataset.title || 'YouTube video';
-      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-      f.referrerPolicy = 'strict-origin-when-cross-origin';
-      f.allowFullscreen = true;
-      a.replaceWith(f);
-      f.focus();
+/* ================================================================
+   PHOTO SLIDER — arrows, dots, autoplay, swipe, keyboard
+   ================================================================ */
+(function slider() {
+  var track = document.getElementById('track');
+  if (!track) return;
+  var slides = track.children;
+  var n = slides.length;
+  var dotsBox = document.getElementById('sDots');
+  var i = 0, timer = null;
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  for (var d = 0; d < n; d++) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-label', 'Photo ' + (d + 1));
+    b.dataset.i = d;
+    dotsBox.appendChild(b);
+  }
+  var dots = dotsBox.children;
+
+  function show(k) {
+    i = (k + n) % n;
+    track.style.transform = 'translateX(' + (-i * 100) + '%)';
+    for (var d = 0; d < n; d++) {
+      dots[d].setAttribute('aria-selected', d === i ? 'true' : 'false');
+      slides[d].setAttribute('aria-hidden', d === i ? 'false' : 'true');
+    }
+  }
+  function next() { show(i + 1); }
+  function prev() { show(i - 1); }
+  function play() { if (!still) { stop(); timer = setInterval(next, 5000); } }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+  document.getElementById('sNext').addEventListener('click', function () { next(); play(); });
+  document.getElementById('sPrev').addEventListener('click', function () { prev(); play(); });
+  dotsBox.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b) { show(+b.dataset.i); play(); }
+  });
+
+  var box = document.getElementById('slider');
+  box.addEventListener('mouseenter', stop);
+  box.addEventListener('mouseleave', play);
+  box.addEventListener('focusin', stop);
+  box.addEventListener('focusout', play);
+  box.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { next(); play(); }
+    if (e.key === 'ArrowLeft') { prev(); play(); }
+  });
+
+  var x0 = null;
+  box.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+  box.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (dx < -40) next(); else if (dx > 40) prev();
+    x0 = null; play();
+  });
+
+  new IntersectionObserver(function (es) {
+    es.forEach(function (en) { en.isIntersecting ? play() : stop(); });
+  }, { threshold: 0.25 }).observe(box);
+
+  show(0);
+})();
+
+/* ================================================================
+   YOUTUBE — click to play, and a playlist of several videos.
+   The player loads only when clicked (faster page, fewer cookies).
+   Opened as a local file, YouTube blocks playback, so the link opens
+   YouTube in a new tab instead.
+   ================================================================ */
+(function video() {
+  var served = /^https?:$/.test(location.protocol);
+
+  function play(a) {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube.com/embed/' + a.dataset.yt + '?autoplay=1&rel=0&playsinline=1';
+    f.title = a.dataset.title || 'YouTube video';
+    f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    f.allowFullscreen = true;
+    f.setAttribute('style', 'width:100%;height:100%;border:0;display:block');
+    a.replaceWith(f);
+    f.focus();
+  }
+
+  function facade(id, title) {
+    var a = document.createElement('a');
+    a.className = 'yt';
+    a.id = 'mPlay';
+    a.href = 'https://www.youtube.com/watch?v=' + id;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.dataset.yt = id;
+    a.dataset.title = title;
+    a.setAttribute('aria-label', 'Play video: ' + title);
+    a.innerHTML = '<img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy">' +
+      '<span class="yt-play" aria-hidden="true"><svg viewBox="0 0 68 48">' +
+      '<path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.7 47.7 34 47.7 34 47.7s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#E8B04B"/>' +
+      '<path d="M45 24 27 14v20z" fill="#0A1224"/></svg></span>';
+    return a;
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('.yt[data-yt]');
+    if (a && served) { e.preventDefault(); play(a); }
+  });
+
+  var list = document.getElementById('playlist');
+  if (!list) return;
+  list.addEventListener('click', function (e) {
+    var b = e.target.closest('.pl[data-yt]');
+    if (!b) return;
+    var id = b.dataset.yt, title = b.dataset.title, tag = b.dataset.tag || '';
+    document.getElementById('mFrame').replaceChildren(facade(id, title));
+    document.getElementById('mTitle').textContent = title;
+    document.getElementById('mTag').textContent = 'Featured' + (tag ? ' \u00b7 ' + tag : '');
+    document.getElementById('mLink').href = 'https://www.youtube.com/watch?v=' + id;
+    list.querySelectorAll('.pl').forEach(function (x) {
+      x.classList.toggle('active', x === b);
+      if (x.dataset.yt) x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
     });
   });
 })();

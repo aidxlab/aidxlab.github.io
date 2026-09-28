@@ -339,11 +339,8 @@ em{font-style:italic;color:var(--gold)}
 .player h3{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:6px 0 4px}
 .player p{margin:0;color:var(--dim);font-size:14.5px}
 .playlist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
-.playlist li{display:grid;grid-template-columns:118px 1fr;gap:14px;align-items:center;padding:10px;border:1px dashed var(--rule);border-radius:14px}
 .thumb{aspect-ratio:16/10;border-radius:9px;display:grid;place-items:center;color:var(--faint);
   background:linear-gradient(135deg,var(--bg2),var(--card2))}
-.playlist h4{font-family:'Fraunces',serif;font-weight:400;font-size:17px;margin:0 0 4px;color:var(--dim)}
-.playlist .mono{color:var(--faint);margin:0;font-size:9.5px}
 
 /* partners */
 .logos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -447,7 +444,6 @@ em{font-style:italic;color:var(--gold)}
   .w-grid{grid-template-columns:1fr}
   .search{max-width:none;margin-left:0}
   .foot-cols{gap:34px}
-  .playlist li{grid-template-columns:92px 1fr}
   .scroll-cue{display:none}
 }
 @media (prefers-reduced-motion:reduce){
@@ -484,4 +480,84 @@ em{font-style:italic;color:var(--gold)}
 .yt-play svg{width:76px;height:54px;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45));transition:transform .2s}
 .yt:hover .yt-play svg,.yt:focus-visible .yt-play svg{transform:scale(1.08)}
 .yt:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+/* Team photo: replace <span>WH</span> with <img src="images/name.jpg" alt="Name"> */
 .avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;position:relative}
+
+/* News card photo */
+.n-photo{width:calc(100% + 44px);margin:-22px -22px 10px;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r) var(--r) 0 0;display:block}
+
+/* ================================================================
+   HIGHLIGHTS
+   ================================================================ */
+.hl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.hl{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:26px 24px;
+  display:flex;flex-direction:column;gap:6px}
+.hl b{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(2.4rem,4vw,3.4rem);line-height:1;color:var(--gold);letter-spacing:-.02em}
+.hl>span.mono{color:var(--fg);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.hl p{margin:4px 0 0;color:var(--dim);font-size:14px;line-height:1.55}
+.hl.feat{grid-column:span 2;text-decoration:none;color:inherit;transition:border-color .25s,transform .25s}
+.hl.feat:hover,.hl.feat:focus-visible{border-color:var(--gold);transform:translateY(-2px)}
+.hl.feat .tag{color:var(--gold);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid color-mix(in srgb,var(--gold) 50%,transparent);border-radius:999px;padding:3px 9px;align-self:flex-start}
+.hl.feat h3{font-family:'Fraunces',serif;font-weight:400;font-size:23px;margin:10px 0 0;line-height:1.2}
+.hl-link{color:var(--gold);margin-top:auto;padding-top:14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+@media(max-width:1000px){.hl-grid{grid-template-columns:repeat(2,1fr)}.hl.feat{grid-column:span 2}}
+@media(max-width:620px){.hl-grid{grid-template-columns:1fr}.hl.feat{grid-column:span 1}}
+
+/* ================================================================
+   PHOTO SLIDER
+   ================================================================ */
+.slider{position:relative;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--card)}
+.track{display:flex;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.slide{flex:0 0 100%;margin:0;position:relative}
+.slide img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.slide figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 28px;color:#EEF1F7;
+  background:linear-gradient(to top,rgba(5,10,22,.92),rgba(5,10,22,0));font-size:15px;
+  display:flex;align-items:baseline;gap:14px}
+.slide figcaption .mono{color:var(--gold);font-size:11px;letter-spacing:.14em}
+.s-arw{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;
+  border:1px solid color-mix(in srgb,#EEF1F7 30%,transparent);background:rgba(10,18,36,.65);color:#EEF1F7;
+  cursor:pointer;display:grid;place-items:center;font-size:15px;transition:background .2s,border-color .2s}
+.s-arw:hover,.s-arw:focus-visible{background:var(--gold);border-color:var(--gold);color:#0A1224}
+.s-arw.prev{left:16px}.s-arw.next{right:16px}
+.s-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:9px}
+.s-dots button{width:9px;height:9px;padding:0;border-radius:50%;border:1px solid #EEF1F7;background:transparent;cursor:pointer}
+.s-dots button[aria-selected="true"]{background:var(--gold);border-color:var(--gold);width:26px;border-radius:999px}
+@media(max-width:620px){.s-arw{width:38px;height:38px}.slide figcaption{padding:18px;font-size:13.5px;flex-direction:column;gap:4px}}
+@media(prefers-reduced-motion:reduce){.track{transition:none}}
+
+/* ================================================================
+   PEOPLE — equal-sized cards
+   ================================================================ */
+.people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
+.people-grid .person{height:100%;min-height:340px}
+@media(max-width:1000px){.people-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.people-grid{grid-template-columns:1fr}}
+
+/* ================================================================
+   NEWS — extra items
+   ================================================================ */
+.n-thumb{aspect-ratio:16/10;border-radius:12px;display:grid;place-items:center;font-size:24px;color:var(--faint);
+  border:1px dashed var(--rule);margin-bottom:10px}
+
+/* ================================================================
+   MEDIA — playlist of several videos
+   ================================================================ */
+.playlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.playlist .pl{width:100%;display:flex;gap:14px;align-items:center;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px;color:inherit;
+  transition:border-color .2s,transform .2s}
+.playlist .pl:hover:not([disabled]),.playlist .pl:focus-visible{border-color:var(--gold);transform:translateX(2px)}
+.playlist .pl.active{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,var(--card))}
+.playlist .pl[disabled]{cursor:default;border-style:dashed;opacity:.75}
+.playlist .thumb{flex:0 0 92px;height:56px;border-radius:9px;overflow:hidden;display:grid;place-items:center;background:#000}
+.playlist .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.playlist .thumb.empty{background:var(--card2);color:var(--faint);font-size:13px;border:1px solid var(--rule)}
+.playlist .pl-b{display:flex;flex-direction:column;gap:3px;min-width:0}
+.playlist .pl-t{font-size:14.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.playlist .pl-b .mono{color:var(--faint);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+/* keep every person card the same shape: bio trimmed to 5 lines, links pinned to the bottom */
+.person .bio{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.person .p-body{display:flex;flex-direction:column;height:100%}
+.person .p-links{margin-top:auto;padding-top:14px}

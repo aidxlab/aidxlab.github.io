@@ -545,13 +545,13 @@ em{font-style:italic;color:var(--gold)}
    HIGHLIGHT TIMELINE — one component: photo + story + step rail
    ================================================================ */
 .tl{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);overflow:hidden;margin-bottom:14px}
-.tl-stage{position:relative;min-height:460px;display:grid}
-.st-item{grid-area:1/1;margin:0;opacity:0;transition:opacity .7s ease, transform 8s linear;transform:scale(1.04)}
+.tl-stage{position:relative;height:clamp(440px,54vh,600px);overflow:hidden}
+.st-item{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .7s ease, transform 9s linear;transform:scale(1.05)}
 .st-item.on{opacity:1;transform:scale(1)}
-.st-item img{width:100%;height:100%;min-height:460px;object-fit:cover;display:block}
+.st-item img{width:100%;height:100%;object-fit:cover;display:block}
 .tl-stage::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,rgba(6,11,24,.94) 0%,rgba(6,11,24,.82) 38%,rgba(6,11,24,.22) 72%,rgba(6,11,24,.1) 100%)}
-.tl-copybox{grid-area:1/1;position:relative;z-index:2;display:grid;align-items:center;max-width:620px;padding:46px 50px}
+  background:linear-gradient(100deg,rgba(6,11,24,.95) 0%,rgba(6,11,24,.86) 34%,rgba(6,11,24,.34) 66%,rgba(6,11,24,.14) 100%)}
+.tl-copybox{position:relative;z-index:2;height:100%;display:grid;align-items:center;max-width:600px;padding:44px 48px}
 .tl-copy{grid-area:1/1;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .5s ease,transform .5s ease}
 .tl-copy.on{opacity:1;transform:none;pointer-events:auto}
 .tl-copy .c-when{color:var(--gold);margin:0 0 12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -594,7 +594,7 @@ em{font-style:italic;color:var(--gold)}
   .tl-stage::after{background:linear-gradient(120deg,rgba(6,11,24,.95) 0%,rgba(6,11,24,.85) 55%,rgba(6,11,24,.35) 100%)}
 }
 @media(max-width:620px){
-  .tl-stage,.st-item img{min-height:420px}
+  .tl-stage{height:clamp(420px,70vh,520px)}
   .tl-steps{grid-template-columns:repeat(2,1fr)}
   .tl-steps li:nth-child(odd){border-left:0}
   .tl-steps li:nth-child(n+3){border-top:1px solid var(--rule)}
@@ -605,3 +605,18 @@ em{font-style:italic;color:var(--gold)}
   .st-item,.tl-copy{transition:none}
   .step.on .bar i{transition:none}
 }
+
+/* ================================================================
+   HERO PHOTO CARD (replaces the demo panel)
+   ================================================================ */
+.hero-photo{margin:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--card);
+  box-shadow:0 30px 70px -40px rgba(0,0,0,.8)}
+.hero-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.hero-photo figcaption{padding:20px 24px 22px;border-top:1px solid var(--rule)}
+.hero-photo .hp-tag{color:var(--gold);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:8px}
+.hero-photo figcaption p{margin:0;color:var(--dim);font-size:14.5px;line-height:1.55}
+.proof{margin:22px 0 0;color:var(--faint);font-size:11px;letter-spacing:.08em;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.proof a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--rule)}
+.proof a:hover{color:var(--gold);border-color:var(--gold)}
+.proof span{color:var(--rule)}
+@media(max-width:900px){.hero-photo img{aspect-ratio:16/10}}

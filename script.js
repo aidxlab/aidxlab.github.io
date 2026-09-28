@@ -267,7 +267,7 @@
   var steps = box.querySelectorAll('.step');
   var n = steps.length, i = 0, timer = null;
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var HOLD = 7000;                      // must match the 7s bar animation in the CSS
+  var HOLD = 5000;                      // must match the 5s bar animation in the CSS
 
   function show(k) {
     i = (k + n) % n;
@@ -284,7 +284,6 @@
   function prev() { show(i - 1); }
 
   function start() {
-    if (still) return;
     stop();
     box.classList.remove('paused');
     timer = setInterval(next, HOLD);

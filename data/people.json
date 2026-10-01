@@ -1,0 +1,41 @@
+{
+  "groups": [
+    {
+      "label": "Lab director",
+      "emptyCards": 2,
+      "emptyRole": "Academic staff",
+      "members": [
+        {
+          "name": "Associate Professor Walayat Hussain",
+          "role": "Director, AIDX Lab · Head of Discipline, Information Technology and Systems",
+          "affiliation": "Peter Faber Business School, Australian Catholic University",
+          "bio": "More than two decades of experience across academia and industry, with over 90 publications including ERA A* and A ranked venues. Associate Editor of <i>IET Communications</i>, <i>International Journal of Web Information Systems</i> and <i>Forecasting</i>, and a Fellow of the European Alliance for Innovation.",
+          "photo": "images/Walayat.jpeg",
+          "links": [
+            { "label": "ACU profile", "url": "https://www.acu.edu.au/research-and-enterprise/our-people/walayat-hussain" },
+            { "label": "Google Scholar", "url": "https://scholar.google.com/citations?hl=en&user=HaA3MowAAAAJ" },
+            { "label": "LinkedIn", "url": "https://www.linkedin.com/in/walayat-hussain-3104317a/" }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "PhD candidates, researchers and students",
+      "emptyCards": 2,
+      "emptyRole": "PhD candidate · Research assistant · Intern",
+      "members": [
+        {
+          "name": "Md Nazmul Hossain",
+          "role": "PhD Candidate",
+          "affiliation": "Peter Faber Business School, Australian Catholic University",
+          "bio": "Recent work on agentic frameworks for early detection and adaptive nudging in higher education, and on what self-improving LLM systems learn in production.",
+          "photo": "images/nazmul.jpeg",
+          "links": [
+            { "label": "Google Scholar", "url": "https://scholar.google.com/citations?user=WHNwDPUAAAAJ&hl=en" },
+            { "label": "LinkedIn", "url": "https://www.linkedin.com/in/md-nazmul-hossain-bd/" }
+          ]
+        }
+      ]
+    }
+  ]
+}

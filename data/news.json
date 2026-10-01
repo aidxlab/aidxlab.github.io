@@ -1,0 +1,19 @@
+{
+  "emptyCards": 2,
+  "feature": {
+    "tag": "Event",
+    "date": "May 2026",
+    "title": "IT Boot Camp with TechSkills Institute",
+    "body": "The AIDX Lab partnered with TechSkills Institute to run a hands-on IT boot camp for nearly 80 ACU students, covering helpdesk ticketing, Entra ID and Office 365, user onboarding, network equipment, device management and interview preparation. Two students received TechSkills internship opportunities.",
+    "photo": "images/photo-5.jpg",
+    "stats": [
+      { "value": "~80", "label": "ACU students took part" },
+      { "value": "2", "label": "TechSkills internship opportunities" }
+    ],
+    "links": [
+      { "label": "Read the story", "url": "https://www.miragenews.com/it-boot-camp-as-real-as-it-gets-1676136/", "icon": "fa-arrow-up-right-from-square" },
+      { "label": "Watch the video", "url": "#media", "icon": "fa-play" }
+    ]
+  },
+  "items": []
+}

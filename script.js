@@ -378,11 +378,11 @@
     if (a && served) { e.preventDefault(); play(a); }
   });
 
-  var list = document.getElementById('playlist');
-  if (!list) return;
-  list.addEventListener('click', function (e) {
+  // the playlist may be built later from data/media.json, so listen on the document
+  document.addEventListener('click', function (e) {
     var b = e.target.closest('.pl[data-yt]');
     if (!b) return;
+    var list = b.closest('.playlist');
     var id = b.dataset.yt, title = b.dataset.title, tag = b.dataset.tag || '';
     document.getElementById('mFrame').replaceChildren(facade(id, title));
     document.getElementById('mTitle').textContent = title;
@@ -392,5 +392,151 @@
       x.classList.toggle('active', x === b);
       if (x.dataset.yt) x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
     });
+  });
+})();
+
+/* ================================================================
+   CONTENT FROM DATA FILES
+   People, News and Media are built from data/*.json so they can be
+   updated without touching the HTML. If a file is missing, unreadable
+   or the page is opened straight from disk, the HTML already in the
+   page is left exactly as it is — the site can never look broken.
+   ================================================================ */
+(function content() {
+  var esc = function (s) { return String(s == null ? '' : s); };
+
+  function load(file) {
+    return fetch('data/' + file, { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  /* ---------------- People ---------------- */
+  function personCard(p) {
+    var avatar = p.photo
+      ? '<img src="' + esc(p.photo) + '" alt="">'
+      : '<span>' + esc(p.initials || (p.name || '').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3)) + '</span>';
+    var links = (p.links || []).map(function (l) {
+      return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
+    }).join('');
+    return '<article class="person rv in">' +
+      '<div class="avatar" aria-hidden="true">' + avatar + '</div>' +
+      '<div class="p-body">' +
+        '<h3>' + esc(p.name) + '</h3>' +
+        '<p class="mono role">' + esc(p.role) + '</p>' +
+        (p.affiliation ? '<p class="aff">' + esc(p.affiliation) + '</p>' : '') +
+        (p.bio ? '<p class="bio">' + p.bio + '</p>' : '') +
+        (links ? '<div class="p-links mono">' + links + '</div>' : '') +
+      '</div></article>';
+  }
+
+  function personSlot(role) {
+    return '<article class="person slot rv in">' +
+      '<div class="avatar" aria-hidden="true"><i class="fa-solid fa-plus"></i></div>' +
+      '<div class="p-body"><h3>Team member</h3>' +
+      '<p class="mono role">' + esc(role) + '</p>' +
+      '<p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>' +
+      '</div></article>';
+  }
+
+  load('people.json').then(function (d) {
+    if (!d || !d.groups || !d.groups.length) return;
+    var box = document.getElementById('peopleList');
+    if (!box) return;
+    box.innerHTML = d.groups.map(function (g) {
+      var cards = (g.members || []).map(personCard).join('');
+      for (var i = 0; i < (g.emptyCards || 0); i++) cards += personSlot(g.emptyRole || 'Team member');
+      return '<p class="mono grp rv in">' + esc(g.label) + '</p><div class="people-grid">' + cards + '</div>';
+    }).join('');
+  });
+
+  /* ---------------- News ---------------- */
+  function newsLinks(list) {
+    return (list || []).map(function (l, i) {
+      var style = i ? ' style="margin-left:18px"' : '';
+      return '<a class="mono n-link" href="' + esc(l.url) + '"' +
+        (l.url.charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + style + '>' +
+        esc(l.label) + ' <i class="fa-solid ' + esc(l.icon || 'fa-arrow-up-right-from-square') + '" aria-hidden="true"></i></a>';
+    }).join('');
+  }
+
+  function featureCard(f) {
+    var stats = (f.stats || []).map(function (s) {
+      return '<div class="n-stat"><b>' + esc(s.value) + '</b><span class="mono">' + esc(s.label) + '</span></div>';
+    }).join('');
+    return '<article class="news feature rv in">' +
+      '<div class="news-img">' +
+        (f.photo ? '<img src="' + esc(f.photo) + '" alt="' + esc(f.title) + '" loading="lazy">' : '') +
+        '<div class="n-stats">' + stats + '</div>' +
+      '</div>' +
+      '<div class="news-b">' +
+        '<p class="mono n-meta"><span class="ntag">' + esc(f.tag) + '</span>' + esc(f.date) + '</p>' +
+        '<h3>' + esc(f.title) + '</h3><p>' + esc(f.body) + '</p>' +
+        newsLinks(f.links) +
+      '</div></article>';
+  }
+
+  function newsCard(n) {
+    return '<article class="news rv in">' +
+      (n.photo ? '<img class="n-photo" src="' + esc(n.photo) + '" alt="' + esc(n.title) + '" loading="lazy">'
+               : '<div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>') +
+      '<p class="mono n-meta"><span class="ntag">' + esc(n.tag) + '</span>' + esc(n.date) + '</p>' +
+      '<h3>' + esc(n.title) + '</h3><p>' + esc(n.body || '') + '</p>' +
+      newsLinks(n.links) +
+      '</article>';
+  }
+
+  function newsSlot() {
+    return '<article class="news slot rv in">' +
+      '<div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>' +
+      '<p class="mono n-meta"><span class="ntag">News</span>Date</p>' +
+      '<h3>Next item</h3><p>Description, photo and link.</p></article>';
+  }
+
+  load('news.json').then(function (d) {
+    if (!d) return;
+    var box = document.getElementById('newsGrid');
+    if (!box) return;
+    var html = (d.feature ? featureCard(d.feature) : '') +
+               (d.items || []).map(newsCard).join('');
+    for (var i = 0; i < (d.emptyCards || 0); i++) html += newsSlot();
+    if (html) box.innerHTML = html;
+  });
+
+  /* ---------------- Media ---------------- */
+  function playBtn(id, title) {
+    return '<a class="yt" id="mPlay" href="https://www.youtube.com/watch?v=' + esc(id) + '" target="_blank" rel="noopener"' +
+      ' data-yt="' + esc(id) + '" data-title="' + esc(title) + '" aria-label="Play video: ' + esc(title) + '">' +
+      '<img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="" loading="lazy">' +
+      '<span class="yt-play" aria-hidden="true"><svg viewBox="0 0 68 48">' +
+      '<path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.7 47.7 34 47.7 34 47.7s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#E8B04B"/>' +
+      '<path d="M45 24 27 14v20z" fill="#0A1224"/></svg></span></a>';
+  }
+
+  load('media.json').then(function (d) {
+    if (!d || !d.videos || !d.videos.length) return;
+    var box = document.getElementById('mediaGrid');
+    if (!box) return;
+    var v = d.videos[0], many = d.videos.length > 1;
+
+    var player = '<figure class="player rv in"><div class="frame" id="mFrame">' + playBtn(v.youtubeId, v.title) + '</div>' +
+      '<figcaption><span class="mono" id="mTag">Featured' + (v.tag ? ' · ' + esc(v.tag) : '') + '</span>' +
+      '<h3 id="mTitle">' + esc(v.title) + '</h3>' +
+      '<p><a class="yt-link" id="mLink" href="https://www.youtube.com/watch?v=' + esc(v.youtubeId) + '" target="_blank" rel="noopener">' +
+      'Watch on YouTube <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></p></figcaption></figure>';
+
+    var list = '';
+    if (many) {
+      list = '<ol class="playlist rv in" id="playlist" aria-label="Choose a video">' +
+        d.videos.map(function (x, i) {
+          return '<li><button class="pl' + (i ? '' : ' active') + '" type="button" data-yt="' + esc(x.youtubeId) + '"' +
+            ' data-title="' + esc(x.title) + '" data-tag="' + esc(x.tag || '') + '" aria-pressed="' + (i ? 'false' : 'true') + '">' +
+            '<span class="thumb"><img src="https://i.ytimg.com/vi/' + esc(x.youtubeId) + '/default.jpg" alt="" loading="lazy"></span>' +
+            '<span class="pl-b"><span class="pl-t">' + esc(x.title) + '</span><span class="mono">' + esc(x.tag || '') + '</span></span>' +
+            '</button></li>';
+        }).join('') + '</ol>';
+    }
+    box.classList.toggle('one', !many);
+    box.innerHTML = player + list;
   });
 })();

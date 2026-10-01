@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -39,7 +38,7 @@
   </a>
   <div class="links" id="links">
     <a href="#about">About</a><a href="#highlights">Highlights</a><a href="#research">Research</a><a href="#people">People</a><a href="#publications">Publications</a>
-    <a href="#news">News</a><a href="#media">Media</a><a href="#contact">Contact</a>
+    <a href="#news">News</a><a href="#media">Media</a><a href="#join">Join us</a><a href="#contact">Contact</a>
   </div>
   <div class="nav-r">
     <button id="themeBtn" class="icon-btn" aria-label="Switch to light theme"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
@@ -150,9 +149,6 @@
       <figure class="st-item" data-i="4">
         <img src="images/photo-5.jpg" alt="TechSkills presenting at the boot camp" loading="lazy">
       </figure>
-      <figure class="st-item" data-i="5">
-        <img src="images/photo-6.jpg" alt="Associate Professor Walayat Hussain speaking at the boot camp" loading="lazy">
-      </figure>
       <div class="tl-copybox" id="tlCopy">
       <div class="tl-copy on" data-i="0">
         <p class="mono c-when"><i class="fa-solid fa-people-group" aria-hidden="true"></i>May 2026</p>
@@ -183,12 +179,6 @@
         <h3>Boot camp video published</h3>
         <p class="c-body">The lab's YouTube channel released a video of the IT Boot Camp run with TechSkills Australia.</p>
         <a class="mono c-link" href="#media">Watch the video <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-      </div>
-      <div class="tl-copy" data-i="5">
-        <p class="mono c-when"><i class="fa-solid fa-plus" aria-hidden="true"></i>Next</p>
-        <h3>Your next highlight</h3>
-        <p class="c-body">Placeholder — awards, keynotes, grants, seminars, new team members and other milestones will appear here.</p>
-        <p class="ph mono" style="margin:0">Placeholder</p>
       </div>
       </div>
       <button class="tl-arw prev" id="tlPrev" aria-label="Previous highlight"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
@@ -233,14 +223,6 @@
             <span class="dot" aria-hidden="true"></span>
             <span class="s-when mono">2026</span>
             <span class="s-title">Boot camp video published</span>
-            <span class="bar" aria-hidden="true"><i></i></span>
-          </button>
-        </li>
-        <li>
-          <button class="step slot" type="button" data-i="5" aria-pressed="false">
-            <span class="dot" aria-hidden="true"></span>
-            <span class="s-when mono">Next</span>
-            <span class="s-title">Your next highlight</span>
             <span class="bar" aria-hidden="true"><i></i></span>
           </button>
         </li>
@@ -318,6 +300,7 @@
     <h2 class="h2">Our <em>team</em></h2>
   </div>
 
+  <div id="peopleList">
     <p class="mono grp rv">Lab director</p>
   <div class="people-grid">
     <article class="person rv">
@@ -383,30 +366,7 @@
         <p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>
       </div>
     </article>
-    <article class="person slot rv">
-      <div class="avatar" aria-hidden="true"><i class="fa-solid fa-plus"></i></div>
-      <div class="p-body">
-        <h3>Team member</h3>
-        <p class="mono role">Research assistant</p>
-        <p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>
-      </div>
-    </article>
-    <article class="person slot rv">
-      <div class="avatar" aria-hidden="true"><i class="fa-solid fa-plus"></i></div>
-      <div class="p-body">
-        <h3>Team member</h3>
-        <p class="mono role">Intern</p>
-        <p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>
-      </div>
-    </article>
-    <article class="person slot rv">
-      <div class="avatar" aria-hidden="true"><i class="fa-solid fa-plus"></i></div>
-      <div class="p-body">
-        <h3>Team member</h3>
-        <p class="mono role">Intern</p>
-        <p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>
-      </div>
-    </article>
+  </div>
   </div>
   <p class="ph mono rv">Placeholder — further team members will be added as details are provided.</p>
 </section>
@@ -522,6 +482,7 @@
 </section>
 
 <!-- 05 PROJECTS -->
+<!-- PROJECTS — hidden until the lab provides content. Delete these comment markers to switch it back on.
 <section class="sec" id="projects">
   <div class="head rv">
     <p class="mono idx">06 — Projects</p>
@@ -535,14 +496,15 @@
   </div>
   <p class="ph mono rv">Placeholder — details will be provided and updated later.</p>
 </section>
+-->
 
 <!-- 06 NEWS -->
 <section class="sec" id="news">
   <div class="head rv">
-    <p class="mono idx">07 — News &amp; events</p>
+    <p class="mono idx">06 — News &amp; events</p>
     <h2 class="h2">Latest from <em>the lab</em></h2>
   </div>
-  <div class="news-grid">
+  <div class="news-grid" id="newsGrid">
     <article class="news feature rv">
       <div class="news-img">
         <img src="images/photo-5.jpg" alt="TechSkills presenting at the AIDX Lab IT Boot Camp" loading="lazy">
@@ -571,30 +533,6 @@
       <h3>Workshop title</h3>
       <p>Description, photo and link.</p>
     </article>
-    <article class="news slot rv">
-      <div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>
-      <p class="mono n-meta"><span class="ntag">Outreach</span>Date</p>
-      <h3>Outreach activity</h3>
-      <p>Description, photo and link.</p>
-    </article>
-    <article class="news slot rv">
-      <div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>
-      <p class="mono n-meta"><span class="ntag">Seminar</span>Date</p>
-      <h3>Seminar series</h3>
-      <p>Description, photo and link.</p>
-    </article>
-    <article class="news slot rv">
-      <div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>
-      <p class="mono n-meta"><span class="ntag">Partnership</span>Date</p>
-      <h3>Industry partnership</h3>
-      <p>Description, photo and link.</p>
-    </article>
-    <article class="news slot rv">
-      <div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>
-      <p class="mono n-meta"><span class="ntag">Award</span>Date</p>
-      <h3>Award or milestone</h3>
-      <p>Description, photo and link.</p>
-    </article>
   </div>
   <p class="ph mono rv">Placeholder — further news, events, workshops, seminars and outreach will be added.</p>
 </section>
@@ -602,11 +540,11 @@
 <!-- 07 MEDIA (video only) -->
 <section class="sec" id="media">
   <div class="head rv">
-    <p class="mono idx">08 — Media</p>
+    <p class="mono idx">07 — Media</p>
     <h2 class="h2">Video <em>updates</em></h2>
     <p class="intro-p">Demonstrations, project updates and recordings of the lab's work.</p>
   </div>
-  <div class="media-grid">
+  <div class="media-grid one" id="mediaGrid">
     <figure class="player rv">
       <div class="frame" id="mFrame">
         <a class="yt" id="mPlay" href="https://www.youtube.com/watch?v=jpmu1fN1UTw" target="_blank" rel="noopener"
@@ -622,33 +560,20 @@
         <p><a class="yt-link" id="mLink" href="https://www.youtube.com/watch?v=jpmu1fN1UTw" target="_blank" rel="noopener">Watch on YouTube <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></p>
       </figcaption>
     </figure>
+<!-- PLAYLIST — shown again when there is more than one video. Delete these comment markers to switch it back on.
     <ol class="playlist rv" id="playlist" aria-label="Choose a video">
       <li><button class="pl active" type="button" data-yt="jpmu1fN1UTw" data-title="IT Bootcamp by ACU's AIDX Lab and TechSkills Australia" data-tag="Outreach" aria-pressed="true">
         <span class="thumb"><img src="https://i.ytimg.com/vi/jpmu1fN1UTw/default.jpg" alt="" loading="lazy"></span>
         <span class="pl-b"><span class="pl-t">IT Bootcamp by ACU's AIDX Lab and TechSkills Australia</span><span class="mono">Outreach</span></span>
       </button></li>
-      <li><button class="pl" type="button" disabled>
-        <span class="thumb empty" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span class="pl-b"><span class="pl-t">Lab introduction</span><span class="mono">Coming soon</span></span>
-      </button></li>
-      <li><button class="pl" type="button" disabled>
-        <span class="thumb empty" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span class="pl-b"><span class="pl-t">Research demonstration</span><span class="mono">Coming soon</span></span>
-      </button></li>
-      <li><button class="pl" type="button" disabled>
-        <span class="thumb empty" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span class="pl-b"><span class="pl-t">Seminar recording</span><span class="mono">Coming soon</span></span>
-      </button></li>
-      <li><button class="pl" type="button" disabled>
-        <span class="thumb empty" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span class="pl-b"><span class="pl-t">Workshop highlights</span><span class="mono">Coming soon</span></span>
-      </button></li>
     </ol>
+-->
   </div>
   <p class="ph mono rv">More videos will be added here as they are published.</p>
 </section>
 
 <!-- 08 PARTNERS -->
+<!-- PARTNERS & FUNDING — hidden until the lab provides logos and details. Delete these comment markers to switch it back on.
 <section class="sec" id="partners">
   <div class="head rv">
     <p class="mono idx">09 — Partners</p>
@@ -662,11 +587,52 @@
   </div>
   <p class="ph mono rv">Placeholder — logos, descriptions, websites and funding acknowledgements will be added.</p>
 </section>
+-->
+
+<!-- 08 JOIN US -->
+<section class="sec" id="join">
+  <div class="head rv">
+    <p class="mono idx">08 — Join us</p>
+    <h2 class="h2">Work <em>with the lab</em></h2>
+    <p class="intro-p">We welcome students, researchers and partners who want to work on AI that improves real decisions.</p>
+  </div>
+  <div class="join-grid">
+    <article class="join rv">
+      <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+      <h3>PhD opportunities</h3>
+      <p class="mono who">Prospective doctoral candidates</p>
+      <p>Research degrees across our five themes, supervised within the Peter Faber Business School. Tell us which theme interests you and the problem you would like to work on.</p>
+      <a class="mono j-link" href="#contact">Enquire about a PhD <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
+    <article class="join rv">
+      <i class="fa-solid fa-flask" aria-hidden="true"></i>
+      <h3>Research assistants</h3>
+      <p class="mono who">Current students and graduates</p>
+      <p>Short-term research roles supporting lab projects, including data work, evaluation studies and prototype development.</p>
+      <a class="mono j-link" href="#contact">Register your interest <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
+    <article class="join rv">
+      <i class="fa-solid fa-user-graduate" aria-hidden="true"></i>
+      <h3>Student placements and internships</h3>
+      <p class="mono who">ACU students</p>
+      <p>Industry placements and internships with the lab, working on real projects such as this website, data analysis and AI prototypes.</p>
+      <a class="mono j-link" href="#contact">Apply for a placement <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
+    <article class="join rv">
+      <i class="fa-solid fa-handshake" aria-hidden="true"></i>
+      <h3>Industry collaboration</h3>
+      <p class="mono who">Organisations and government</p>
+      <p>Joint projects, pilots, student boot camps and applied research with organisations facing difficult decisions.</p>
+      <a class="mono j-link" href="#contact">Start a conversation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
+  </div>
+  <p class="ph mono rv">Placeholder — an application form will be added so applicants can submit their details and CV directly.</p>
+</section>
 
 <!-- 09 CONTACT -->
 <section class="sec" id="contact">
   <div class="head rv">
-    <p class="mono idx">10 — Contact</p>
+    <p class="mono idx">09 — Contact</p>
     <h2 class="h2">Work <em>with us</em></h2>
   </div>
   <div class="contact rv">

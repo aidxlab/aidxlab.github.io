@@ -403,17 +403,22 @@
    FORMS:  paste the Google Form links for the Join us buttons.
    ================================================================ */
 window.AIDX_CONFIG = {
-  sheets: {
-    people: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=1169063939&single=true&output=csv',   // e.g. https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=1937207031&single=true&output=csv
-    news:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=796094486&single=true&output=csv',
-    media:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=1937207031&single=true&output=csv'
+  // ---- Supabase (the lab's database) ----
+  supabase: {
+    url: 'https://qwvbiliewfkxpxiwlmri.supabase.co',
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3dmJpbGlld2ZreHB4aXdsbXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMDUwMTYsImV4cCI6MjEwNjc4MTAxNn0.T4EWTC2z4AKzyLOixJUapmYC1Ra8VnFl9t4fEGqqP6Y',
+    bucket: 'cvs'
   },
-  forms: {
-    phd:        '',   // PhD opportunities
-    assistant:  '',   // Research assistants
-    internship: '',   // Student placements and internships
-    industry:   ''    // Industry collaboration
-  }
+
+  // ---- Google Sheets (used only if Supabase is unreachable) ----
+  sheets: {
+    people: '',
+    news:   '',
+    media:  ''
+  },
+
+  // ---- Google Forms (not used: the site has its own form) ----
+  forms: { phd: '', assistant: '', internship: '', industry: '' }
 };
 
 /* ================================================================
@@ -467,7 +472,22 @@ window.AIDX_CONFIG = {
     return url;
   }
 
-  /* ---------- load: a published Sheet if configured, otherwise the local file ---------- */
+  /* ---------- Supabase ---------- */
+  var SB = CFG.supabase || {};
+  function sbReady() { return !!(SB.url && SB.key); }
+  function sbHeaders(extra) {
+    var h = { apikey: SB.key, Authorization: 'Bearer ' + SB.key };
+    for (var k in (extra || {})) h[k] = extra[k];
+    return h;
+  }
+  function sbSelect(table, query) {
+    if (!sbReady()) return Promise.resolve(null);
+    return fetch(SB.url + '/rest/v1/' + table + '?' + query, { headers: sbHeaders() })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  /* ---------- load: Supabase first, then a published Sheet, then the local file ---------- */
   function load(key, file) {
     var sheet = (CFG.sheets || {})[key];
     if (sheet) {
@@ -527,7 +547,27 @@ window.AIDX_CONFIG = {
     return order.map(function (g) { return { label: g, members: byGroup[g], emptyCards: 0 }; });
   }
 
-  load('people', 'people.json').then(function (d) {
+  function peopleFromDb(rows) {
+    var order = [], byGroup = {};
+    rows.forEach(function (r) {
+      var g = r.group_name || 'Team';
+      if (!byGroup[g]) { byGroup[g] = []; order.push(g); }
+      byGroup[g].push({
+        name: r.name, role: r.role, affiliation: r.affiliation, bio: r.bio, photo: r.photo_url,
+        links: [
+          { label: 'ACU profile', url: r.profile_url },
+          { label: 'Google Scholar', url: r.scholar_url },
+          { label: 'LinkedIn', url: r.linkedin_url }
+        ]
+      });
+    });
+    return order.map(function (g) { return { label: g, members: byGroup[g], emptyCards: 0 }; });
+  }
+
+  sbSelect('members', 'select=*&order=sort_order.asc').then(function (rows) {
+    if (rows && rows.length) return { groups: peopleFromDb(rows) };
+    return load('people', 'people.json');
+  }).then(function (d) {
     if (!d) return;
     var groups = d.rows ? peopleFromRows(d.rows) : d.groups;
     if (!groups || !groups.length) return;
@@ -595,7 +635,23 @@ window.AIDX_CONFIG = {
     return { feature: feature, items: items, emptyCards: 0 };
   }
 
-  load('news', 'news.json').then(function (d) {
+  function newsFromDb(rows) {
+    var feature = null, items = [];
+    rows.forEach(function (r) {
+      var o = {
+        tag: r.tag, date: r.date_text, title: r.title, body: r.body, photo: r.photo_url,
+        links: [{ label: r.link_label || 'Read more', url: r.link_url, icon: 'fa-arrow-up-right-from-square' }],
+        stats: [{ value: r.stat1, label: r.stat1_label }, { value: r.stat2, label: r.stat2_label }]
+      };
+      if (!feature && r.is_feature) feature = o; else items.push(o);
+    });
+    return { feature: feature, items: items, emptyCards: 0 };
+  }
+
+  sbSelect('news', 'select=*&order=sort_order.asc').then(function (rows) {
+    if (rows && rows.length) return newsFromDb(rows);
+    return load('news', 'news.json');
+  }).then(function (d) {
     if (!d) return;
     var data = d.rows ? newsFromRows(d.rows) : d;
     var box = document.getElementById('newsGrid');
@@ -621,7 +677,12 @@ window.AIDX_CONFIG = {
       '<path d="M45 24 27 14v20z" fill="#0A1224"/></svg></span></a>';
   }
 
-  load('media', 'media.json').then(function (d) {
+  sbSelect('videos', 'select=*&order=sort_order.asc').then(function (rows) {
+    if (rows && rows.length) {
+      return { videos: rows.map(function (r) { return { youtubeId: ytId(r.youtube_id), title: r.title, tag: r.tag }; }) };
+    }
+    return load('media', 'media.json');
+  }).then(function (d) {
     if (!d) return;
     var videos;
     if (d.rows) {
@@ -655,5 +716,97 @@ window.AIDX_CONFIG = {
     }
     box.classList.toggle('one', !many);
     box.innerHTML = player + list;
+  });
+})();
+
+/* ================================================================
+   APPLICATION FORM
+   Writes a row into Supabase "applications" and, if a CV is attached,
+   uploads it to the private "cvs" bucket. Row Level Security means a
+   visitor can submit but can never read anyone's application back.
+   ================================================================ */
+(function apply() {
+  var CFG = (window.AIDX_CONFIG || {}).supabase || {};
+  var form = document.getElementById('applyForm');
+  if (!form) return;
+  var note = document.getElementById('applyNote');
+  var btn = document.getElementById('applySend');
+  var kindSel = document.getElementById('applyKind');
+
+  // the Join us cards preselect what the person is applying for
+  document.querySelectorAll('[data-kind]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (kindSel) kindSel.value = a.dataset.kind;
+      setTimeout(function () { var n = form.querySelector('[name="name"]'); if (n) n.focus(); }, 500);
+    });
+  });
+
+  function headers(extra) {
+    var h = { apikey: CFG.key, Authorization: 'Bearer ' + CFG.key };
+    for (var k in (extra || {})) h[k] = extra[k];
+    return h;
+  }
+
+  function say(msg, cls) {
+    note.textContent = msg;
+    note.className = 'mono f-note' + (cls ? ' ' + cls : '');
+  }
+
+  function safeName(s) {
+    return String(s).toLowerCase().replace(/[^a-z0-9.\-]+/g, '-').replace(/^-+|-+$/g, '').slice(-60);
+  }
+
+  function uploadCv(file, kind) {
+    var path = kind + '/' + Date.now() + '-' + safeName(file.name);
+    return fetch(CFG.url + '/storage/v1/object/' + (CFG.bucket || 'cvs') + '/' + path, {
+      method: 'POST',
+      headers: headers({ 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'false' }),
+      body: file
+    }).then(function (r) {
+      if (!r.ok) throw new Error('cv upload failed');
+      return path;
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    if (!CFG.url || !CFG.key) { say('The form is not connected yet. Please email the lab instead.', 'bad'); return; }
+
+    var data = new FormData(form);
+    var file = document.getElementById('applyCv').files[0];
+    if (file && file.size > 10 * 1024 * 1024) { say('That CV is larger than 10 MB. Please attach a smaller file.', 'bad'); return; }
+
+    btn.disabled = true;
+    say(file ? 'Uploading your CV…' : 'Sending…');
+
+    var step = file ? uploadCv(file, data.get('kind')) : Promise.resolve(null);
+
+    step.then(function (cvPath) {
+      say('Sending…');
+      return fetch(CFG.url + '/rest/v1/applications', {
+        method: 'POST',
+        headers: headers({ 'Content-Type': 'application/json', Prefer: 'return=minimal' }),
+        body: JSON.stringify({
+          kind:         data.get('kind'),
+          name:         data.get('name'),
+          email:        data.get('email'),
+          organisation: data.get('organisation') || null,
+          availability: data.get('availability') || null,
+          interests:    data.get('interests') || null,
+          skills:       data.get('skills') || null,
+          motivation:   data.get('motivation'),
+          links:        data.get('links') || null,
+          cv_path:      cvPath
+        })
+      });
+    }).then(function (r) {
+      if (!r || !r.ok) throw new Error('save failed');
+      form.classList.add('sent');
+      say('Thank you. Your application has been sent to the lab, and we will be in touch by email.', 'ok');
+    }).catch(function () {
+      btn.disabled = false;
+      say('Sorry, something went wrong. Please try again, or email the lab directly.', 'bad');
+    });
   });
 })();

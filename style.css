@@ -634,3 +634,56 @@ em{font-style:italic;color:var(--gold)}
   gap:18px;padding:30px 32px}
 .news-img .n-stat b{color:var(--gold)}
 @media(max-width:860px){.news-img{min-height:220px}.n-stats{padding:22px 20px;gap:12px}}
+
+/* ================================================================
+   JOIN US
+   ================================================================ */
+.join-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.join{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:30px 32px;
+  display:flex;flex-direction:column;gap:8px;transition:border-color .25s,transform .25s}
+.join:hover{border-color:var(--gold);transform:translateY(-2px)}
+.join>i{color:var(--gold);font-size:20px;margin-bottom:6px}
+.join h3{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:0;line-height:1.2}
+.join .who{color:var(--faint);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;margin:0}
+.join p{margin:4px 0 0;color:var(--dim);font-size:14.5px;line-height:1.6}
+.j-link{color:var(--gold);text-decoration:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  margin-top:auto;padding-top:18px;border-bottom:0}
+.j-link i{transition:transform .2s;display:inline-block}
+.join:hover .j-link i{transform:translateX(4px)}
+@media(max-width:800px){.join-grid{grid-template-columns:1fr}.join{padding:24px 22px}}
+
+/* one video only: let the player use the full width */
+.media-grid.one{grid-template-columns:1fr}
+
+/* timeline now has 5 steps */
+.tl-steps{grid-template-columns:repeat(5,1fr)}
+@media(max-width:1000px){.tl-steps{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.tl-steps{grid-template-columns:repeat(2,1fr)}}
+.media-grid.one .player{max-width:960px;margin:0 auto}
+
+/* ================================================================
+   APPLICATION FORM
+   ================================================================ */
+.apply{border:1px solid var(--rule);border-radius:var(--r);background:var(--card);padding:34px 36px;margin-top:14px}
+.apply-head h3{font-family:'Fraunces',serif;font-weight:400;font-size:26px;margin:0 0 8px;color:var(--gold)}
+.apply-head p{margin:0 0 24px;color:var(--dim);font-size:14.5px;max-width:62ch;line-height:1.6}
+.f-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.f{display:flex;flex-direction:column;gap:7px}
+.f.wide{grid-column:1/-1}
+.f>span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.f>span i{color:var(--gold);font-style:normal}
+.f input,.f select,.f textarea{background:var(--bg2);border:1px solid var(--rule);border-radius:10px;
+  padding:12px 14px;color:var(--fg);font:inherit;font-size:14.5px;width:100%}
+.f textarea{resize:vertical;min-height:84px}
+.f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--gold)}
+.f input[type="file"]{padding:9px 12px;color:var(--dim);font-size:13px}
+.f input::placeholder,.f textarea::placeholder{color:var(--faint)}
+.f-check{display:flex;gap:11px;align-items:flex-start;margin:20px 0 0;color:var(--dim);font-size:14px;line-height:1.5}
+.f-check input{margin-top:3px;accent-color:var(--gold);width:16px;height:16px;flex:0 0 auto}
+.f-check i{color:var(--gold);font-style:normal}
+.f-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:22px}
+.f-note{margin:0;color:var(--dim);font-size:11px;letter-spacing:.06em}
+.f-note.ok{color:var(--teal)}
+.f-note.bad{color:#FF8A8A}
+.apply form.sent .f-grid,.apply form.sent .f-check,.apply form.sent .f-actions button{display:none}
+@media(max-width:760px){.f-grid{grid-template-columns:1fr}.apply{padding:24px 20px}}

@@ -602,30 +602,108 @@
       <h3>PhD opportunities</h3>
       <p class="mono who">Prospective doctoral candidates</p>
       <p>Research degrees across our five themes, supervised within the Peter Faber Business School. Tell us which theme interests you and the problem you would like to work on.</p>
-      <a class="mono j-link" href="#contact" data-form="phd">Enquire about a PhD <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="mono j-link" href="#apply" data-kind="phd">Enquire about a PhD <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </article>
     <article class="join rv">
       <i class="fa-solid fa-flask" aria-hidden="true"></i>
       <h3>Research assistants</h3>
       <p class="mono who">Current students and graduates</p>
       <p>Short-term research roles supporting lab projects, including data work, evaluation studies and prototype development.</p>
-      <a class="mono j-link" href="#contact" data-form="assistant">Register your interest <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="mono j-link" href="#apply" data-kind="assistant">Register your interest <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </article>
     <article class="join rv">
       <i class="fa-solid fa-user-graduate" aria-hidden="true"></i>
       <h3>Student placements and internships</h3>
-      <p class="mono who">University students</p>
+      <p class="mono who">ACU students</p>
       <p>Industry placements and internships with the lab, working on real projects such as this website, data analysis and AI prototypes.</p>
-      <a class="mono j-link" href="https://docs.google.com/forms/d/e/1FAIpQLSdXfeQfEBGqmJ_kRgJAHC4i775WJ9DST8EL8k-rqtG6ofBHuA/viewform" target="_blank" rel="noopener">Apply for a placement <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="mono j-link" href="#apply" data-kind="internship">Apply for a placement <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </article>
     <article class="join rv">
       <i class="fa-solid fa-handshake" aria-hidden="true"></i>
       <h3>Industry collaboration</h3>
       <p class="mono who">Organisations and government</p>
       <p>Joint projects, pilots, student boot camps and applied research with organisations facing difficult decisions.</p>
-      <a class="mono j-link" href="#contact" data-form="industry">Start a conversation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <a class="mono j-link" href="#apply" data-kind="industry">Start a conversation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </article>
   </div>
+
+  <div class="apply rv" id="apply">
+    <div class="apply-head">
+      <h3>Apply or register your interest</h3>
+      <p>Tell us a little about yourself and attach your CV. Your details go directly to the lab and are not published on this website.</p>
+    </div>
+
+    <form id="applyForm" novalidate>
+      <div class="f-grid">
+        <label class="f">
+          <span>I am applying for <i>*</i></span>
+          <select name="kind" id="applyKind" required>
+            <option value="internship">Student placement or internship</option>
+            <option value="phd">PhD opportunity</option>
+            <option value="assistant">Research assistant role</option>
+            <option value="industry">Industry collaboration</option>
+          </select>
+        </label>
+
+        <label class="f">
+          <span>Full name <i>*</i></span>
+          <input name="name" type="text" required autocomplete="name">
+        </label>
+
+        <label class="f">
+          <span>Email <i>*</i></span>
+          <input name="email" type="email" required autocomplete="email">
+        </label>
+
+        <label class="f">
+          <span>Course and year, or organisation</span>
+          <input name="organisation" type="text" placeholder="e.g. Bachelor of IT, 3rd year">
+        </label>
+
+        <label class="f">
+          <span>Availability</span>
+          <input name="availability" type="text" placeholder="e.g. two days a week from March">
+        </label>
+
+        <label class="f">
+          <span>Research areas of interest</span>
+          <input name="interests" type="text" placeholder="e.g. Agentic AI, Trustworthy AI">
+        </label>
+
+        <label class="f wide">
+          <span>Relevant skills and experience</span>
+          <textarea name="skills" rows="3"></textarea>
+        </label>
+
+        <label class="f wide">
+          <span>Why would you like to work with the lab? <i>*</i></span>
+          <textarea name="motivation" rows="4" required></textarea>
+        </label>
+
+        <label class="f">
+          <span>LinkedIn, GitHub or portfolio</span>
+          <input name="links" type="url" placeholder="https://">
+        </label>
+
+        <label class="f">
+          <span>CV (PDF or Word, max 10 MB)</span>
+          <input name="cv" type="file" id="applyCv" accept=".pdf,.doc,.docx,application/pdf">
+        </label>
+      </div>
+
+      <label class="f-check">
+        <input type="checkbox" name="consent" required>
+        <span>I agree that the AIDX Lab may store and use this information to assess my application. <i>*</i></span>
+      </label>
+
+      <div class="f-actions">
+        <button class="btn btn-gold" type="submit" id="applySend">Send application</button>
+        <p class="mono f-note" id="applyNote" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+
+</section>
 
 <!-- 09 CONTACT -->
 <section class="sec" id="contact">

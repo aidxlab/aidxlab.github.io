@@ -396,6 +396,27 @@
 })();
 
 /* ================================================================
+   SITE CONFIG — the only part the lab needs to change
+   ================================================================
+   SHEETS: paste the "Publish to web" CSV link for each tab.
+           Leave a line empty to use the file in data/ instead.
+   FORMS:  paste the Google Form links for the Join us buttons.
+   ================================================================ */
+window.AIDX_CONFIG = {
+  sheets: {
+    people: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=1169063939&single=true&output=csv',   // e.g. https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv
+    news:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=796094486&single=true&output=csv',
+    media:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=0&single=true&output=csv'
+  },
+  forms: {
+    phd:        '',   // PhD opportunities
+    assistant:  '',   // Research assistants
+    internship: '',   // Student placements and internships
+    industry:   ''    // Industry collaboration
+  }
+};
+
+/* ================================================================
    CONTENT FROM DATA FILES
    People, News and Media are built from data/*.json so they can be
    updated without touching the HTML. If a file is missing, unreadable
@@ -403,107 +424,194 @@
    page is left exactly as it is — the site can never look broken.
    ================================================================ */
 (function content() {
+  var CFG = window.AIDX_CONFIG || { sheets: {}, forms: {} };
   var esc = function (s) { return String(s == null ? '' : s); };
 
-  function load(file) {
+  /* ---------- Join us buttons ---------- */
+  document.querySelectorAll('[data-form]').forEach(function (a) {
+    var url = (CFG.forms || {})[a.dataset.form];
+    if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+  });
+
+  /* ---------- tiny CSV parser (handles quotes and commas inside fields) ---------- */
+  function parseCSV(text) {
+    var rows = [], row = [], field = '', inQ = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQ) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+        else field += c;
+      } else if (c === '"') inQ = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c !== '\r') field += c;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    if (!rows.length) return [];
+    var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
+    return rows.filter(function (r) { return r.join('').trim(); }).map(function (r) {
+      var o = {};
+      head.forEach(function (h, k) { o[h] = (r[k] || '').trim(); });
+      return o;
+    });
+  }
+
+  var yes = function (v) { return /^(y|yes|true|1|✓|approved)$/i.test(String(v || '').trim()); };
+
+  /* Google Drive share links don't work as image sources — convert them */
+  function img(url) {
+    url = esc(url).trim();
+    if (!url) return '';
+    var m = url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([\w-]{20,})/);
+    if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+    return url;
+  }
+
+  /* ---------- load: a published Sheet if configured, otherwise the local file ---------- */
+  function load(key, file) {
+    var sheet = (CFG.sheets || {})[key];
+    if (sheet) {
+      return fetch(sheet, { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text() : null; })
+        .then(function (t) { return t ? { rows: parseCSV(t) } : null; })
+        .catch(function () { return null; });
+    }
     return fetch('data/' + file, { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; });
   }
 
-  /* ---------------- People ---------------- */
+  /* ================= People ================= */
   function personCard(p) {
-    var avatar = p.photo
-      ? '<img src="' + esc(p.photo) + '" alt="">'
+    var photo = img(p.photo);
+    var avatar = photo ? '<img src="' + photo + '" alt="">'
       : '<span>' + esc(p.initials || (p.name || '').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3)) + '</span>';
-    var links = (p.links || []).map(function (l) {
+    var links = (p.links || []).filter(function (l) { return l && l.url; }).map(function (l) {
       return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
     }).join('');
     return '<article class="person rv in">' +
       '<div class="avatar" aria-hidden="true">' + avatar + '</div>' +
-      '<div class="p-body">' +
-        '<h3>' + esc(p.name) + '</h3>' +
-        '<p class="mono role">' + esc(p.role) + '</p>' +
-        (p.affiliation ? '<p class="aff">' + esc(p.affiliation) + '</p>' : '') +
-        (p.bio ? '<p class="bio">' + p.bio + '</p>' : '') +
-        (links ? '<div class="p-links mono">' + links + '</div>' : '') +
+      '<div class="p-body"><h3>' + esc(p.name) + '</h3>' +
+      '<p class="mono role">' + esc(p.role) + '</p>' +
+      (p.affiliation ? '<p class="aff">' + esc(p.affiliation) + '</p>' : '') +
+      (p.bio ? '<p class="bio">' + p.bio + '</p>' : '') +
+      (links ? '<div class="p-links mono">' + links + '</div>' : '') +
       '</div></article>';
   }
 
   function personSlot(role) {
     return '<article class="person slot rv in">' +
       '<div class="avatar" aria-hidden="true"><i class="fa-solid fa-plus"></i></div>' +
-      '<div class="p-body"><h3>Team member</h3>' +
-      '<p class="mono role">' + esc(role) + '</p>' +
+      '<div class="p-body"><h3>Team member</h3><p class="mono role">' + esc(role) + '</p>' +
       '<p class="bio">Name, position, affiliation, projects, publications, awards and contact details.</p>' +
       '</div></article>';
   }
 
-  load('people.json').then(function (d) {
-    if (!d || !d.groups || !d.groups.length) return;
+  function peopleFromRows(rows) {
+    // Sheet columns: approved, show, order, group, name, role, affiliation, bio, photo, scholar, linkedin, profile
+    var ok = rows.filter(function (r) { return yes(r.approved) && (r.show === undefined || r.show === '' || yes(r.show)); });
+    ok.sort(function (a, b) { return (parseFloat(a.order) || 99) - (parseFloat(b.order) || 99); });
+    var order = [], byGroup = {};
+    ok.forEach(function (r) {
+      var g = r.group || 'Team';
+      if (!byGroup[g]) { byGroup[g] = []; order.push(g); }
+      byGroup[g].push({
+        name: r.name, role: r.role, affiliation: r.affiliation, bio: r.bio, photo: r.photo,
+        links: [
+          { label: 'ACU profile', url: r.profile },
+          { label: 'Google Scholar', url: r.scholar },
+          { label: 'LinkedIn', url: r.linkedin }
+        ]
+      });
+    });
+    return order.map(function (g) { return { label: g, members: byGroup[g], emptyCards: 0 }; });
+  }
+
+  load('people', 'people.json').then(function (d) {
+    if (!d) return;
+    var groups = d.rows ? peopleFromRows(d.rows) : d.groups;
+    if (!groups || !groups.length) return;
     var box = document.getElementById('peopleList');
     if (!box) return;
-    box.innerHTML = d.groups.map(function (g) {
+    box.innerHTML = groups.map(function (g) {
       var cards = (g.members || []).map(personCard).join('');
       for (var i = 0; i < (g.emptyCards || 0); i++) cards += personSlot(g.emptyRole || 'Team member');
       return '<p class="mono grp rv in">' + esc(g.label) + '</p><div class="people-grid">' + cards + '</div>';
     }).join('');
   });
 
-  /* ---------------- News ---------------- */
+  /* ================= News ================= */
   function newsLinks(list) {
-    return (list || []).map(function (l, i) {
+    return (list || []).filter(function (l) { return l && l.url; }).map(function (l, i) {
       var style = i ? ' style="margin-left:18px"' : '';
-      return '<a class="mono n-link" href="' + esc(l.url) + '"' +
-        (l.url.charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + style + '>' +
-        esc(l.label) + ' <i class="fa-solid ' + esc(l.icon || 'fa-arrow-up-right-from-square') + '" aria-hidden="true"></i></a>';
+      var ext = l.url.charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"';
+      return '<a class="mono n-link" href="' + esc(l.url) + '"' + ext + style + '>' + esc(l.label) +
+        ' <i class="fa-solid ' + esc(l.icon || 'fa-arrow-up-right-from-square') + '" aria-hidden="true"></i></a>';
     }).join('');
   }
 
   function featureCard(f) {
-    var stats = (f.stats || []).map(function (s) {
+    var stats = (f.stats || []).filter(function (s) { return s && s.value; }).map(function (s) {
       return '<div class="n-stat"><b>' + esc(s.value) + '</b><span class="mono">' + esc(s.label) + '</span></div>';
     }).join('');
+    var photo = img(f.photo);
     return '<article class="news feature rv in">' +
-      '<div class="news-img">' +
-        (f.photo ? '<img src="' + esc(f.photo) + '" alt="' + esc(f.title) + '" loading="lazy">' : '') +
-        '<div class="n-stats">' + stats + '</div>' +
-      '</div>' +
-      '<div class="news-b">' +
-        '<p class="mono n-meta"><span class="ntag">' + esc(f.tag) + '</span>' + esc(f.date) + '</p>' +
-        '<h3>' + esc(f.title) + '</h3><p>' + esc(f.body) + '</p>' +
-        newsLinks(f.links) +
-      '</div></article>';
+      '<div class="news-img">' + (photo ? '<img src="' + photo + '" alt="' + esc(f.title) + '" loading="lazy">' : '') +
+      '<div class="n-stats">' + stats + '</div></div>' +
+      '<div class="news-b"><p class="mono n-meta"><span class="ntag">' + esc(f.tag) + '</span>' + esc(f.date) + '</p>' +
+      '<h3>' + esc(f.title) + '</h3><p>' + esc(f.body) + '</p>' + newsLinks(f.links) + '</div></article>';
   }
 
   function newsCard(n) {
+    var photo = img(n.photo);
     return '<article class="news rv in">' +
-      (n.photo ? '<img class="n-photo" src="' + esc(n.photo) + '" alt="' + esc(n.title) + '" loading="lazy">'
-               : '<div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>') +
+      (photo ? '<img class="n-photo" src="' + photo + '" alt="' + esc(n.title) + '" loading="lazy">'
+             : '<div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>') +
       '<p class="mono n-meta"><span class="ntag">' + esc(n.tag) + '</span>' + esc(n.date) + '</p>' +
-      '<h3>' + esc(n.title) + '</h3><p>' + esc(n.body || '') + '</p>' +
-      newsLinks(n.links) +
-      '</article>';
+      '<h3>' + esc(n.title) + '</h3><p>' + esc(n.body || '') + '</p>' + newsLinks(n.links) + '</article>';
   }
 
   function newsSlot() {
-    return '<article class="news slot rv in">' +
-      '<div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>' +
-      '<p class="mono n-meta"><span class="ntag">News</span>Date</p>' +
-      '<h3>Next item</h3><p>Description, photo and link.</p></article>';
+    return '<article class="news slot rv in"><div class="n-thumb" aria-hidden="true"><i class="fa-regular fa-image"></i></div>' +
+      '<p class="mono n-meta"><span class="ntag">News</span>Date</p><h3>Next item</h3>' +
+      '<p>Description, photo and link.</p></article>';
   }
 
-  load('news.json').then(function (d) {
+  function newsFromRows(rows) {
+    // Sheet columns: show, feature, date, tag, title, body, photo, link label, link url, stat1, stat1 label, stat2, stat2 label
+    var ok = rows.filter(function (r) { return r.show === undefined || r.show === '' || yes(r.show); });
+    var feature = null, items = [];
+    ok.forEach(function (r) {
+      var o = {
+        tag: r.tag, date: r.date, title: r.title, body: r.body, photo: r.photo,
+        links: [{ label: r['link label'] || 'Read more', url: r['link url'], icon: 'fa-arrow-up-right-from-square' }],
+        stats: [
+          { value: r.stat1, label: r['stat1 label'] },
+          { value: r.stat2, label: r['stat2 label'] }
+        ]
+      };
+      if (!feature && yes(r.feature)) feature = o; else items.push(o);
+    });
+    return { feature: feature, items: items, emptyCards: 0 };
+  }
+
+  load('news', 'news.json').then(function (d) {
     if (!d) return;
+    var data = d.rows ? newsFromRows(d.rows) : d;
     var box = document.getElementById('newsGrid');
     if (!box) return;
-    var html = (d.feature ? featureCard(d.feature) : '') +
-               (d.items || []).map(newsCard).join('');
-    for (var i = 0; i < (d.emptyCards || 0); i++) html += newsSlot();
+    var html = (data.feature ? featureCard(data.feature) : '') + (data.items || []).map(newsCard).join('');
+    for (var i = 0; i < (data.emptyCards || 0); i++) html += newsSlot();
     if (html) box.innerHTML = html;
   });
 
-  /* ---------------- Media ---------------- */
+  /* ================= Media ================= */
+  function ytId(v) {
+    v = esc(v).trim();
+    var m = v.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{6,})/);
+    return m ? m[1] : v;
+  }
+
   function playBtn(id, title) {
     return '<a class="yt" id="mPlay" href="https://www.youtube.com/watch?v=' + esc(id) + '" target="_blank" rel="noopener"' +
       ' data-yt="' + esc(id) + '" data-title="' + esc(title) + '" aria-label="Play video: ' + esc(title) + '">' +
@@ -513,11 +621,21 @@
       '<path d="M45 24 27 14v20z" fill="#0A1224"/></svg></span></a>';
   }
 
-  load('media.json').then(function (d) {
-    if (!d || !d.videos || !d.videos.length) return;
+  load('media', 'media.json').then(function (d) {
+    if (!d) return;
+    var videos;
+    if (d.rows) {
+      // Sheet columns: show, order, youtube, title, tag
+      videos = d.rows.filter(function (r) { return (r.show === undefined || r.show === '' || yes(r.show)) && r.youtube; })
+        .sort(function (a, b) { return (parseFloat(a.order) || 99) - (parseFloat(b.order) || 99); })
+        .map(function (r) { return { youtubeId: ytId(r.youtube), title: r.title, tag: r.tag }; });
+    } else {
+      videos = d.videos;
+    }
+    if (!videos || !videos.length) return;
     var box = document.getElementById('mediaGrid');
     if (!box) return;
-    var v = d.videos[0], many = d.videos.length > 1;
+    var v = videos[0], many = videos.length > 1;
 
     var player = '<figure class="player rv in"><div class="frame" id="mFrame">' + playBtn(v.youtubeId, v.title) + '</div>' +
       '<figcaption><span class="mono" id="mTag">Featured' + (v.tag ? ' · ' + esc(v.tag) : '') + '</span>' +
@@ -527,14 +645,13 @@
 
     var list = '';
     if (many) {
-      list = '<ol class="playlist rv in" id="playlist" aria-label="Choose a video">' +
-        d.videos.map(function (x, i) {
-          return '<li><button class="pl' + (i ? '' : ' active') + '" type="button" data-yt="' + esc(x.youtubeId) + '"' +
-            ' data-title="' + esc(x.title) + '" data-tag="' + esc(x.tag || '') + '" aria-pressed="' + (i ? 'false' : 'true') + '">' +
-            '<span class="thumb"><img src="https://i.ytimg.com/vi/' + esc(x.youtubeId) + '/default.jpg" alt="" loading="lazy"></span>' +
-            '<span class="pl-b"><span class="pl-t">' + esc(x.title) + '</span><span class="mono">' + esc(x.tag || '') + '</span></span>' +
-            '</button></li>';
-        }).join('') + '</ol>';
+      list = '<ol class="playlist rv in" id="playlist" aria-label="Choose a video">' + videos.map(function (x, i) {
+        return '<li><button class="pl' + (i ? '' : ' active') + '" type="button" data-yt="' + esc(x.youtubeId) + '"' +
+          ' data-title="' + esc(x.title) + '" data-tag="' + esc(x.tag || '') + '" aria-pressed="' + (i ? 'false' : 'true') + '">' +
+          '<span class="thumb"><img src="https://i.ytimg.com/vi/' + esc(x.youtubeId) + '/default.jpg" alt="" loading="lazy"></span>' +
+          '<span class="pl-b"><span class="pl-t">' + esc(x.title) + '</span><span class="mono">' + esc(x.tag || '') + '</span></span>' +
+          '</button></li>';
+      }).join('') + '</ol>';
     }
     box.classList.toggle('one', !many);
     box.innerHTML = player + list;

@@ -406,8 +406,7 @@ window.AIDX_CONFIG = {
   sheets: {
     people: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=1169063939&single=true&output=csv',   // e.g. https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv
     news:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=796094486&single=true&output=csv',
-    media:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=0&single=true&output=csv'
-  },
+    media:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0ptne_-si-7EGLMnXhwnzhNJ2iCaRYvIdGy37J2SAefRok2lBxL_Ft36PAheGkupk6q0PE4v_x9Ni/pub?gid=1937207031&single=true&output=csv'
   forms: {
     phd:        '',   // PhD opportunities
     assistant:  '',   // Research assistants

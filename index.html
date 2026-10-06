@@ -740,14 +740,15 @@
         <div><dt class="mono">Address</dt><dd>Peter Faber Business School<br>Australian Catholic University<br>North Sydney NSW, Australia</dd></div>
       </dl>
     </div>
-    <form class="c-form" action="https://formspree.io/f/meaqyzob" method="POST">
+    <form class="c-form" id="contactForm" novalidate>
       <label><span class="mono">Name</span><input type="text" name="name" autocomplete="name" required></label>
       <label><span class="mono">Email</span><input type="email" name="email" autocomplete="email" required></label>
       <label><span class="mono">Enquiry type</span>
         <select name="type"><option>General enquiry</option><option>Research collaboration</option><option>Industry partnership</option><option>Prospective research student</option></select>
       </label>
       <label><span class="mono">Message</span><textarea name="message" rows="5" required></textarea></label>
-      <button type="submit" class="btn btn-gold">Send message <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <button type="submit" class="btn btn-gold" id="contactSend">Send message <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <p class="mono f-note" id="contactNote" role="status" aria-live="polite"></p>
     </form>
   </div>
 </section>

@@ -829,3 +829,61 @@ window.AIDX_CONFIG = {
     });
   });
 })();
+
+/* ================================================================
+   CONTACT FORM
+   The message is saved into Supabase first, so an enquiry can never
+   be lost. The email alert is a separate, optional step: if the
+   Edge Function is down, the row is still safely in the database.
+   ================================================================ */
+(function contact() {
+  var CFG = (window.AIDX_CONFIG || {}).supabase || {};
+  var form = document.getElementById('contactForm');
+  if (!form) return;
+  var btn  = document.getElementById('contactSend');
+  var note = document.getElementById('contactNote');
+
+  function say(msg, cls) {
+    note.textContent = msg;
+    note.className = 'mono f-note' + (cls ? ' ' + cls : '');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    if (!CFG.url || !CFG.key) { say('The form is not connected yet. Please email the lab instead.', 'bad'); return; }
+
+    var d = new FormData(form);
+    var body = {
+      name:    d.get('name'),
+      email:   d.get('email'),
+      subject: d.get('type'),
+      message: d.get('message')
+    };
+
+    btn.disabled = true;
+    say('Sending…');
+
+    fetch(CFG.url + '/rest/v1/messages', {
+      method: 'POST',
+      headers: { apikey: CFG.key, Authorization: 'Bearer ' + CFG.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('save failed');
+
+      // tell the lab by email. Fire and forget: the message is already saved.
+      fetch(CFG.url + '/functions/v1/notify-message', {
+        method: 'POST',
+        headers: { apikey: CFG.key, Authorization: 'Bearer ' + CFG.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).catch(function () { /* the row is saved either way */ });
+
+      form.reset();
+      say('Thank you. Your message has been sent and we will reply by email.', 'ok');
+      btn.disabled = false;
+    }).catch(function () {
+      btn.disabled = false;
+      say('Sorry, something went wrong. Please try again in a moment.', 'bad');
+    });
+  });
+})();

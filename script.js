@@ -756,16 +756,23 @@ window.AIDX_CONFIG = {
     return String(s).toLowerCase().replace(/[^a-z0-9.\-]+/g, '-').replace(/^-+|-+$/g, '').slice(-60);
   }
 
-  function uploadCv(file, kind) {
-    var path = kind + '/' + Date.now() + '-' + safeName(file.name);
-    return fetch(CFG.url + '/storage/v1/object/' + (CFG.bucket || 'cvs') + '/' + path, {
+  // One uploader for both buckets.
+  //   cvs    — private. Only the lab can open these, from the dashboard.
+  //   photos — public, because a profile photo has to load in a browser.
+  function upload(bucket, file, folder) {
+    var path = folder + '/' + Date.now() + '-' + safeName(file.name);
+    return fetch(CFG.url + '/storage/v1/object/' + bucket + '/' + path, {
       method: 'POST',
       headers: headers({ 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'false' }),
       body: file
     }).then(function (r) {
-      if (!r.ok) throw new Error('cv upload failed');
+      if (!r.ok) throw new Error(bucket + ' upload failed');
       return path;
     });
+  }
+
+  function publicUrl(bucket, path) {
+    return CFG.url + '/storage/v1/object/public/' + bucket + '/' + path;
   }
 
   form.addEventListener('submit', function (e) {
@@ -774,15 +781,24 @@ window.AIDX_CONFIG = {
     if (!CFG.url || !CFG.key) { say('The form is not connected yet. Please email the lab instead.', 'bad'); return; }
 
     var data = new FormData(form);
+    var kind = data.get('kind');
     var file = document.getElementById('applyCv').files[0];
+    var pic  = document.getElementById('applyPhoto').files[0];
     if (file && file.size > 10 * 1024 * 1024) { say('That CV is larger than 10 MB. Please attach a smaller file.', 'bad'); return; }
+    if (pic && pic.size > 5 * 1024 * 1024) { say('That photo is larger than 5 MB. Please attach a smaller one.', 'bad'); return; }
 
     btn.disabled = true;
-    say(file ? 'Uploading your CV…' : 'Sending…');
+    say(file || pic ? 'Uploading your files…' : 'Sending…');
 
-    var step = file ? uploadCv(file, data.get('kind')) : Promise.resolve(null);
+    // Upload whatever was attached, then save the row. A failed photo
+    // must not lose the application, so that one is allowed to fail quietly.
+    var step = Promise.all([
+      file ? upload(CFG.bucket || 'cvs', file, kind) : null,
+      pic ? upload('photos', pic, kind).then(function (p) { return publicUrl('photos', p); }, function () { return null; }) : null
+    ]);
 
-    step.then(function (cvPath) {
+    step.then(function (out) {
+      var cvPath = out[0], photoUrl = out[1];
       say('Sending…');
       return fetch(CFG.url + '/rest/v1/applications', {
         method: 'POST',
@@ -797,7 +813,9 @@ window.AIDX_CONFIG = {
           skills:       data.get('skills') || null,
           motivation:   data.get('motivation'),
           links:        data.get('links') || null,
-          cv_path:      cvPath
+          cv_path:      cvPath,
+          bio:          data.get('bio') || null,
+          photo_url:    photoUrl
         })
       });
     }).then(function (r) {

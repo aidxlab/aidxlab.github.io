@@ -813,6 +813,7 @@ window.AIDX_CONFIG = {
           skills:       data.get('skills') || null,
           motivation:   data.get('motivation'),
           links:        data.get('links') || null,
+          scholar_url:  data.get('scholar') || null,
           cv_path:      cvPath,
           bio:          data.get('bio') || null,
           photo_url:    photoUrl

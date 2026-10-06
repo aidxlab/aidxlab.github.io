@@ -1,23 +1,28 @@
 /* =========================================================
-   AIDX Lab — AI for Decision Excellence
-   Palette: deep navy (intelligence) · gold (excellence / the decision)
-            sky (AI) · teal (safety) · violet (cost)
+   AIDEX Lab — AI for Decision Excellence
+   Palette taken from the lab logo:
+       #08156A deep blue · #0349D2 royal blue · #22C9F7 cyan
+
+   NOTE ON NAMES: the accent tokens are still called --gold,
+   --gold-2 and --gold-ink because they are used in ~400 places.
+   They are the brand accent, whatever colour that is. Change the
+   three values below and the whole site follows.
    ========================================================= */
 :root{
-  --bg:#0A1224; --bg2:#0E1830; --card:#101C37; --card2:#13213F;
-  --fg:#EEF1F7; --dim:#93A0B8; --faint:#5E6C88; --rule:#1E2A47;
-  --gold:#E8B04B; --gold-2:#F5CD7E; --sky:#6EA8FF; --teal:#3CCFB0; --violet:#A98BFF;
-  --gold-ink:#0A1224;
+  --bg:#060D22; --bg2:#0A1433; --card:#0C1839; --card2:#0F1E46;
+  --fg:#EDF3FA; --dim:#94A4C4; --faint:#5D6E92; --rule:#1C2B55;
+  --gold:#38CBF5; --gold-2:#8AE2FC; --sky:#6EA8FF; --teal:#3CCFB0; --violet:#A98BFF;
+  --gold-ink:#041024;
   --max:1200px; --r:18px;
   --shadow:0 30px 60px -30px rgba(0,0,0,.55), 0 0 0 1px var(--rule);
   color-scheme:dark;
 }
 [data-theme="light"]{
-  --bg:#F5F3EE; --bg2:#ECE9E1; --card:#FFFFFF; --card2:#F8F6F1;
-  --fg:#0B1530; --dim:#4F5B73; --faint:#8993A6; --rule:#DCD7CB;
-  --gold:#A26E14; --gold-2:#C48A24; --sky:#2456C9; --teal:#0E8A73; --violet:#6A4BD1;
+  --bg:#F2F5FA; --bg2:#E6ECF5; --card:#FFFFFF; --card2:#F6F9FD;
+  --fg:#08153C; --dim:#4B5A7A; --faint:#8794AF; --rule:#D5DEEC;
+  --gold:#0B4FD0; --gold-2:#083CA8; --sky:#2456C9; --teal:#0E8A73; --violet:#6A4BD1;
   --gold-ink:#FFFFFF;
-  --shadow:0 30px 60px -34px rgba(11,21,48,.28), 0 0 0 1px var(--rule);
+  --shadow:0 30px 60px -34px rgba(8,21,60,.22), 0 0 0 1px var(--rule);
   color-scheme:light;
 }
 
@@ -62,7 +67,12 @@ em{font-style:italic;color:var(--gold)}
   padding:18px 32px;border-bottom:1px solid transparent;transition:background .35s,border-color .35s,padding .35s}
 .nav.stuck{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-bottom-color:var(--rule);padding:12px 32px}
-.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo{height:26px;width:auto}
+.logo-light{display:none}
+.logo-dark{display:block}
+[data-theme="light"] .logo-light{display:block}
+[data-theme="light"] .logo-dark{display:none}
 .brand-t{display:flex;align-items:baseline;gap:6px}
 .brand-t b{font-family:'Fraunces',serif;font-weight:500;font-size:20px;letter-spacing:.08em}
 .brand-t small{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}

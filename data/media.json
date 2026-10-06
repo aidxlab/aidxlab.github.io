@@ -2,13 +2,8 @@
   "videos": [
     {
       "youtubeId": "jpmu1fN1UTw",
-      "title": "IT Bootcamp by ACU's AIDX Lab and TechSkills Australia",
+      "title": "IT Bootcamp by ACU's AIDEX Lab and TechSkills Australia",
       "tag": "Outreach"
-    },
-    {
-      "youtubeId": "dQw4w9WgXcQ",
-      "title": "Test second video",
-      "tag": "Seminar"
     }
   ]
 }

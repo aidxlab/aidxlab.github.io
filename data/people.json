@@ -44,13 +44,23 @@
       },
       {
        "label": "LinkedIn",
-       "url": "https://www.linkedin.com/in/syed-fazal-e-hasan-922145293/"
+       "url": "https://www.linkedin.com/in/fazalehasan/"
       }
      ]
     },
     {
      "name": "Dr Andrea Giovanetti",
-     "role": "Research Associate"
+     "role": "Research Associate",
+     "links": [
+      {
+       "label": "ACU profile",
+       "url": "https://www.acu.edu.au/research-and-enterprise/our-people/andrea-giovannetti"
+      },
+      {
+       "label": "Google Scholar",
+       "url": "https://scholar.google.com/citations?user=HileARUAAAAJ&hl=en"
+      }
+     ]
     },
     {
      "name": "Dr Mahmoud Bekhit",
@@ -66,13 +76,23 @@
       },
       {
        "label": "LinkedIn",
-       "url": "https://au.linkedin.com/in/mahmoudbekhit"
+       "url": "https://www.linkedin.com/in/mahmoudbekhit/"
       }
      ]
     },
     {
-     "name": "Dr Machi Varanasi",
-     "role": "Research Associate"
+     "name": "Dr Machi Raju Varanasi",
+     "role": "Research Associate",
+     "links": [
+      {
+       "label": "Google Scholar",
+       "url": "https://scholar.google.com/citations?user=sYMEN0AAAAAJ&hl=en"
+      },
+      {
+       "label": "LinkedIn",
+       "url": "https://www.linkedin.com/in/rajuvaranasi/"
+      }
+     ]
     }
    ],
    "emptyCards": 0
@@ -96,7 +116,17 @@
     },
     {
      "name": "Anik Kumar Saha",
-     "role": "PhD Student"
+     "role": "PhD Student",
+     "links": [
+      {
+       "label": "Google Scholar",
+       "url": "https://scholar.google.com/citations?user=UOCajq4AAAAJ&hl=en"
+      },
+      {
+       "label": "LinkedIn",
+       "url": "https://www.linkedin.com/in/anik-kumarsaha/"
+      }
+     ]
     },
     {
      "name": "Syed Mustejab",
@@ -114,7 +144,13 @@
    "members": [
     {
      "name": "Muhammad Nasir",
-     "role": "MRes Student"
+     "role": "MRes Student",
+     "links": [
+      {
+       "label": "LinkedIn",
+       "url": "https://www.linkedin.com/in/muhammad-nasir-33664194/"
+      }
+     ]
     }
    ],
    "emptyCards": 0
@@ -128,7 +164,13 @@
     },
     {
      "name": "Liam New",
-     "role": "Research Assistant"
+     "role": "Research Assistant",
+     "links": [
+      {
+       "label": "LinkedIn",
+       "url": "https://www.linkedin.com/in/liam-n-6b3854194/"
+      }
+     ]
     }
    ],
    "emptyCards": 0

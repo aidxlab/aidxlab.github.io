@@ -46,7 +46,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/fazalehasan/"
       }
-     ]
+     ],
+     "photo": "images/fazal-e-hasan.jpg"
     },
     {
      "name": "Dr Andrea Giovanetti",
@@ -78,7 +79,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/mahmoudbekhit/"
       }
-     ]
+     ],
+     "photo": "images/mahmoud-bekhit.jpg"
     },
     {
      "name": "Dr Machi Raju Varanasi",
@@ -92,7 +94,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/rajuvaranasi/"
       }
-     ]
+     ],
+     "photo": "images/machi-raju-varanasi.jpg"
     }
    ],
    "emptyCards": 0
@@ -126,7 +129,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/anik-kumarsaha/"
       }
-     ]
+     ],
+     "photo": "images/anik-kumar-saha.jpg"
     },
     {
      "name": "Syed Mustejab",
@@ -150,7 +154,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/muhammad-nasir-33664194/"
       }
-     ]
+     ],
+     "photo": "images/muhammad-nasir.jpg"
     }
    ],
    "emptyCards": 0
@@ -170,7 +175,8 @@
        "label": "LinkedIn",
        "url": "https://www.linkedin.com/in/liam-n-6b3854194/"
       }
-     ]
+     ],
+     "photo": "images/liam-new.jpg"
     }
    ],
    "emptyCards": 0

@@ -258,7 +258,9 @@ em{font-style:italic;color:var(--gold)}
 .theme:hover .more i{transform:translateX(4px)}
 
 /* people */
-.grp{color:var(--dim);margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.grp{color:var(--dim);margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.grp-n{color:var(--faint);font-variant-numeric:tabular-nums}
 .person{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;background:var(--card);border:1px solid var(--rule);
   border-radius:var(--r);padding:24px;transition:border-color .3s}
 .person:hover{border-color:color-mix(in srgb,var(--gold) 50%,var(--rule))}
@@ -522,8 +524,27 @@ em{font-style:italic;color:var(--gold)}
 /* ================================================================
    PEOPLE — equal-sized cards
    ================================================================ */
-.people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch}
-.people-grid .person{height:100%;min-height:340px}
+.people-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;align-items:stretch}
+.people-grid .person{height:100%}
+.people-grid + .grp{margin-top:46px}
+
+/* a single-person group (the director) gets the full width */
+.people-grid.one{grid-template-columns:1fr}
+.people-grid.one .person{padding:30px}
+.people-grid.one .avatar{width:112px;height:112px}
+.people-grid.one .avatar span{font-size:30px}
+.people-grid.one h3{font-size:30px}
+
+/* a long list of names, no bios: four across, tighter */
+.people-grid.compact{grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:12px}
+.people-grid.compact .person{padding:18px 20px;gap:16px;align-items:center}
+.people-grid.compact .avatar{width:44px;height:44px}
+.people-grid.compact .avatar span{font-size:14px}
+.people-grid.compact h3{font-size:18px;margin:0 0 3px}
+.people-grid.compact .role{font-size:10px;margin:0}
+.people-grid.compact .aff{font-size:12.5px;margin-top:4px}
+.people-grid.compact .p-links{margin-top:10px;padding-top:0;gap:12px;font-size:10px}
+@media(max-width:620px){.people-grid,.people-grid.compact{grid-template-columns:1fr}}
 @media(max-width:1000px){.people-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.people-grid{grid-template-columns:1fr}}
 

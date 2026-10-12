@@ -544,6 +544,9 @@ em{font-style:italic;color:var(--gold)}
 .people-grid.compact .role{font-size:10px;margin:0}
 .people-grid.compact .aff{font-size:12.5px;margin-top:4px}
 .people-grid.compact .p-links{margin-top:10px;padding-top:0;gap:12px;font-size:10px}
+.people-grid.compact .bio{display:none}   /* a bio belongs on the full card only */
+.people-grid.compact .person{align-items:start}
+.people-grid.compact .p-body{justify-content:center}
 @media(max-width:620px){.people-grid,.people-grid.compact{grid-template-columns:1fr}}
 @media(max-width:1000px){.people-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.people-grid{grid-template-columns:1fr}}

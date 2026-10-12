@@ -584,10 +584,10 @@ window.AIDX_CONFIG = {
 
       // Density follows the group. A long list of names with no bios reads
       // badly as big cards, so those get a tighter four-across grid.
-      var hasBio = ms.some(function (m) { return m && m.bio; });
-      var cls = 'people-grid';
-      if (ms.length === 1 && hasBio) cls += ' one';   // the director, with a full profile
-      else if (!hasBio) cls += ' compact';            // a list of names reads better tight
+      // Only a one-person group (the director) gets the full profile card.
+      // Everyone else is compact, so one member's bio cannot inflate the
+      // empty cards beside them.
+      var cls = 'people-grid' + (ms.length === 1 && ms[0] && ms[0].bio ? ' one' : ' compact');
 
       return '<p class="mono grp rv in"><span>' + esc(g.label) + '</span>' +
         '<span class="grp-n">' + ms.length + '</span></p>' +

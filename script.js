@@ -504,8 +504,12 @@ window.AIDX_CONFIG = {
   /* ================= People ================= */
   function personCard(p) {
     var photo = img(p.photo);
+    // initials skip lower-case particles, so "Karl Perez de Tagle" is KPT, not KPd
+    var auto = (p.name || '').split(/\s+/)
+      .filter(function (w) { return w && w[0] === w[0].toUpperCase() && /[A-Za-z]/.test(w[0]); })
+      .map(function (w) { return w[0]; }).join('').slice(0, 3);
     var avatar = photo ? '<img src="' + photo + '" alt="">'
-      : '<span>' + esc(p.initials || (p.name || '').split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3)) + '</span>';
+      : '<span>' + esc(p.initials || auto) + '</span>';
     var links = (p.links || []).filter(function (l) { return l && l.url; }).map(function (l) {
       return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
     }).join('');
@@ -574,9 +578,20 @@ window.AIDX_CONFIG = {
     var box = document.getElementById('peopleList');
     if (!box) return;
     box.innerHTML = groups.map(function (g) {
-      var cards = (g.members || []).map(personCard).join('');
+      var ms = g.members || [];
+      var cards = ms.map(personCard).join('');
       for (var i = 0; i < (g.emptyCards || 0); i++) cards += personSlot(g.emptyRole || 'Team member');
-      return '<p class="mono grp rv in">' + esc(g.label) + '</p><div class="people-grid">' + cards + '</div>';
+
+      // Density follows the group. A long list of names with no bios reads
+      // badly as big cards, so those get a tighter four-across grid.
+      var hasBio = ms.some(function (m) { return m && m.bio; });
+      var cls = 'people-grid';
+      if (ms.length === 1 && hasBio) cls += ' one';   // the director, with a full profile
+      else if (!hasBio) cls += ' compact';            // a list of names reads better tight
+
+      return '<p class="mono grp rv in"><span>' + esc(g.label) + '</span>' +
+        '<span class="grp-n">' + ms.length + '</span></p>' +
+        '<div class="' + cls + '">' + cards + '</div>';
     }).join('');
   });
 
